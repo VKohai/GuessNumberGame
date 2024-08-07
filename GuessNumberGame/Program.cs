@@ -6,8 +6,9 @@ int points = 5;
 
 while (true)
 {
-    var guessNumber = rand.Next(1, 101);
-    Console.WriteLine("Бот загадал число.");
+    var (min, max) = ChooseDifficult();
+    var guessNumber = rand.Next(min, max);
+    Console.WriteLine($"Бот загадал число {min} до {max - 1}.");
     int myNumber = 0;
     int playerIndex = 0;
 
@@ -68,4 +69,32 @@ static IEnumerable<Player> RegisterPlayers()
     }
 
     return players;
+}
+
+static (int, int) ChooseDifficult()
+{
+    Console.Write(
+        "Выбери уровень сложности.\n\n" +
+        "1.Легкий (диапазон от 1 до 50)\n" +
+        "2.Средний (диапазон от 1 до 100)\n" +
+        "3.Сложный (диапазон от 1 до 1000)\n" +
+        "4.Свой диапазон\n" +
+        "Ответ: ");
+
+    if (int.TryParse(Console.ReadLine(), out int difficult) == false)
+        return (1, 101);
+
+    switch (difficult)
+    {
+        case 1:
+            return (1, 51);
+        case 2:
+            return (1, 101);
+        case 3:
+            return (1, 1001);
+        default:
+            Console.Write("\nЧерез пробел введи мин. и макс. пределы диапазона: ");
+            var (min, max) = Console.ReadLine().Split() switch { var data => (data[0], data[1]) };
+            return (int.Parse(min), int.Parse(max) + 1);
+    }
 }
