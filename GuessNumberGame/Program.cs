@@ -1,26 +1,71 @@
-﻿Random rand = new Random();
+﻿using GuessNumberGame;
+
+Random rand = new Random();
+var players = RegisterPlayers().ToList();
+int points = 5;
+
 while (true)
 {
     var guessNumber = rand.Next(1, 101);
-    Console.WriteLine("Бот загадал число. Отгадай");
-    int myNumber = -1;
+    Console.WriteLine("Бот загадал число.");
+    int myNumber = 0;
+    int playerIndex = 0;
 
-    while (myNumber != guessNumber)
+    do
     {
-        Console.Write("Я думаю, это число ");
-        myNumber = Int32.Parse(Console.ReadLine());
-        if (myNumber <= guessNumber)
+        if (playerIndex == players.Count)
+            playerIndex = 0;
+
+        Console.Write($"{players[playerIndex].Name}, ваша очередь!\nЯ думаю, это число ");
+        myNumber = int.Parse(Console.ReadLine());
+        if (myNumber < guessNumber)
         {
             Console.WriteLine("Число меньше заданного");
-        } else if (myNumber >= guessNumber)
+        } else if (myNumber > guessNumber)
         {
             Console.WriteLine("Число больше заданного");
         }
-    }
-    Console.WriteLine($"Поздравляю, ты выйгриал! Это число {guessNumber}");
+        ++playerIndex;
+    } while (myNumber != guessNumber);
 
-    Console.Write("Хочешь продолжить - нажми 1: ");
-    if (Console.ReadLine() != "1")
-        break;
+    if (playerIndex == players.Count) --playerIndex;
+
+    players[playerIndex].AddBalance(points);
+    Console.WriteLine($"Поздравляю, {players[playerIndex].Name}, ты выйграл! Это число {guessNumber}.\n" +
+        $"Ты получаешь {points} очков и твой баланс теперь {players[playerIndex].Balance}");
+
+    int i = 0;
+    while (i < players.Count)
+    {
+        Console.Write($"{players[i].Name}, если хочешь продолжить - нажми 1: ");
+        if (Console.ReadLine() != "1")
+            break;
+        ++i;
+    }
+
+    // Завершение игры
+    if (i < players.Count) break;
     Console.WriteLine();
+}
+
+static IEnumerable<Player> RegisterPlayers()
+{
+    Console.Write("Регистрация участников.\n\nВведи колчество игроков: ");
+    int.TryParse(Console.ReadLine(), out int amountOfPlayers);
+
+    var players = new List<Player>();
+    for (int i = 0; i < amountOfPlayers; ++i)
+    {
+        Console.Write($"Имя игрока №{i + 1}: ");
+        var name = Console.ReadLine().Trim();
+        if (string.IsNullOrEmpty(name))
+        {
+            --i;
+            continue;
+        }
+        var player = new Player(name);
+        players.Add(player);
+    }
+
+    return players;
 }
