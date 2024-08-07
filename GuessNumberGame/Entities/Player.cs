@@ -1,7 +1,11 @@
-﻿namespace GuessNumberGame;
+﻿using GuessNumberGame.Abstractions;
 
-public class Player
+namespace GuessNumberGame.Entities;
+
+public class Player : Entity
 {
+    private static int s_id = 1;
+
     private string _name;
     public string Name
     {
@@ -21,10 +25,11 @@ public class Player
         get => _balance;
         private set => _balance = value;
     }
-
+    
     public Player(string name)
     {
         _name = name;
+        Id = s_id++;
     }
 
     public void AddBalance(int balance)

@@ -1,4 +1,4 @@
-﻿using GuessNumberGame;
+﻿using GuessNumberGame.Entities;
 
 Random rand = new Random();
 var players = RegisterPlayers().ToList();
