@@ -4,7 +4,13 @@ using GuessNumberGame.Entities;
 namespace GuessNumberGame.Repositories;
 public class GameRepository : IRepository<Game>
 {
-    private static IList<Game> Entities => new List<Game>();
+    private static IList<Game> Entities { get; }
+
+    static GameRepository()
+    {
+        Entities = new List<Game>();
+    }
+
     public void Create(Game entity)
     {
         if (!Entities.Contains(entity))
