@@ -11,7 +11,7 @@ while (players.Any())
     int myNumber = 0;
     int playerIndex = 0;
 
-    do
+    while (true)
     {
         if (playerIndex == players.Count)
             playerIndex = 0;
@@ -21,14 +21,17 @@ while (players.Any())
         if (myNumber < guessNumber)
         {
             Console.WriteLine("Число меньше заданного");
-        } else if (myNumber > guessNumber)
+        }
+        else if (myNumber > guessNumber)
         {
             Console.WriteLine("Число больше заданного");
         }
+        else
+        {
+            break;
+        }
         ++playerIndex;
-    } while (myNumber != guessNumber);
-
-    if (playerIndex == players.Count) --playerIndex;
+    }
 
     players[playerIndex].AddBalance(points);
     Console.WriteLine($"Поздравляю, {players[playerIndex].Name}, ты выйграл! Это число {guessNumber}.\n" +
