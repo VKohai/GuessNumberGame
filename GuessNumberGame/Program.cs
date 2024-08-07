@@ -4,9 +4,9 @@ Random rand = new Random();
 var players = RegisterPlayers().ToList();
 int points = 5;
 
-while (true)
+while (players.Any())
 {
-    var (min, max) = ChooseDifficult();
+    var (min, max) = ChooseDifficulty();
     var guessNumber = rand.Next(min, max);
     Console.WriteLine($"Бот загадал число {min} до {max - 1}.");
     int myNumber = 0;
@@ -22,7 +22,8 @@ while (true)
         if (myNumber < guessNumber)
         {
             Console.WriteLine("Число меньше заданного");
-        } else if (myNumber > guessNumber)
+        }
+        else if (myNumber > guessNumber)
         {
             Console.WriteLine("Число больше заданного");
         }
@@ -35,17 +36,17 @@ while (true)
     Console.WriteLine($"Поздравляю, {players[playerIndex].Name}, ты выйграл! Это число {guessNumber}.\n" +
         $"Ты получаешь {points} очков и твой баланс теперь {players[playerIndex].Balance}");
 
-    int i = 0;
-    while (i < players.Count)
+    playerIndex = 0;
+    while (playerIndex < players.Count)
     {
-        Console.Write($"{players[i].Name}, если хочешь продолжить - нажми 1: ");
+        Console.Write($"{players[playerIndex].Name}, если хочешь продолжить - нажми 1: ");
         if (Console.ReadLine() != "1")
             break;
-        ++i;
+        ++playerIndex;
     }
 
     // Завершение игры
-    if (i < players.Count) break;
+    if (playerIndex < players.Count) break;
     Console.WriteLine();
 }
 
@@ -71,7 +72,7 @@ static IEnumerable<Player> RegisterPlayers()
     return players;
 }
 
-static (int, int) ChooseDifficult()
+static (int, int) ChooseDifficulty()
 {
     Console.Write(
         "Выбери уровень сложности.\n\n" +
