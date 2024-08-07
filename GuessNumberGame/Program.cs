@@ -15,4 +15,4 @@ while (myNumber != guessNumber)
         Console.WriteLine("Число больше заданного");
     }
 }
-Console.WriteLine($"Поздравляю, ты выйгриал! Это число {guessNumber}");
+Console.WriteLine($"Поздравляю, ты выйграл! Это число {guessNumber}");
