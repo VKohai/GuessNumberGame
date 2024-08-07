@@ -1,17 +1,28 @@
-﻿using GuessNumberGame;
+﻿using GuessNumberGame.Abstractions;
+using GuessNumberGame.Entities;
+using GuessNumberGame.Repositories;
 
 Random rand = new Random();
-var players = RegisterPlayers().ToList();
+IRepository<Player> playerRepos = new PlayerRepository();
+IRepository<Game> gameRepos = new GameRepository();
+var players = RegisterPlayers(playerRepos).ToList();
 int points = 5;
 
-while (true)
+while (players.Any())
 {
-    var guessNumber = rand.Next(1, 101);
-    Console.WriteLine("Бот загадал число.");
+    var (min, max) = ChooseDifficulty();
+    var guessNumber = rand.Next(min, max);
+    Console.WriteLine($"Бот загадал число {min} до {max - 1}.");
     int myNumber = 0;
     int playerIndex = 0;
 
-    do
+    var game = new Game
+    {
+        Difficulty = $"{min} {max}",
+        Players = players,
+    };
+
+    while (true)
     {
         if (playerIndex == players.Count)
             playerIndex = 0;
@@ -21,39 +32,46 @@ while (true)
         if (myNumber < guessNumber)
         {
             Console.WriteLine("Число меньше заданного");
-        } else if (myNumber > guessNumber)
+        }
+        else if (myNumber > guessNumber)
         {
             Console.WriteLine("Число больше заданного");
         }
+        else {
+            break;
+        }
         ++playerIndex;
-    } while (myNumber != guessNumber);
-
-    if (playerIndex == players.Count) --playerIndex;
+    }
 
     players[playerIndex].AddBalance(points);
+    game.SummaryPoints += points;
+    game.Winner = players[playerIndex];
+
     Console.WriteLine($"Поздравляю, {players[playerIndex].Name}, ты выйграл! Это число {guessNumber}.\n" +
         $"Ты получаешь {points} очков и твой баланс теперь {players[playerIndex].Balance}");
 
-    int i = 0;
-    while (i < players.Count)
+    playerIndex = 0;
+    while (playerIndex < players.Count)
     {
-        Console.Write($"{players[i].Name}, если хочешь продолжить - нажми 1: ");
+        Console.Write($"{players[playerIndex].Name}, если хочешь продолжить - нажми 1: ");
         if (Console.ReadLine() != "1")
             break;
-        ++i;
+        ++playerIndex;
     }
 
     // Завершение игры
-    if (i < players.Count) break;
+    game.EndOfTheGame = DateTime.UtcNow;
+    gameRepos.Create(game);
+
+    if (playerIndex < players.Count) break;
     Console.WriteLine();
 }
 
-static IEnumerable<Player> RegisterPlayers()
+static IEnumerable<Player> RegisterPlayers(IRepository<Player> repository)
 {
     Console.Write("Регистрация участников.\n\nВведи колчество игроков: ");
     int.TryParse(Console.ReadLine(), out int amountOfPlayers);
 
-    var players = new List<Player>();
     for (int i = 0; i < amountOfPlayers; ++i)
     {
         Console.Write($"Имя игрока №{i + 1}: ");
@@ -64,8 +82,36 @@ static IEnumerable<Player> RegisterPlayers()
             continue;
         }
         var player = new Player(name);
-        players.Add(player);
+        repository.Create(player);
     }
 
-    return players;
+    return repository.GetAll();
+}
+
+static (int, int) ChooseDifficulty()
+{
+    Console.Write(
+        "Выбери уровень сложности.\n\n" +
+        "1.Легкий (диапазон от 1 до 50)\n" +
+        "2.Средний (диапазон от 1 до 100)\n" +
+        "3.Сложный (диапазон от 1 до 1000)\n" +
+        "4.Свой диапазон\n" +
+        "Ответ: ");
+
+    if (int.TryParse(Console.ReadLine(), out int difficult) == false)
+        return (1, 101);
+
+    switch (difficult)
+    {
+        case 1:
+            return (1, 51);
+        case 2:
+            return (1, 101);
+        case 3:
+            return (1, 1001);
+        default:
+            Console.Write("\nЧерез пробел введи мин. и макс. пределы диапазона: ");
+            var (min, max) = Console.ReadLine().Split() switch { var data => (data[0], data[1]) };
+            return (int.Parse(min), int.Parse(max) + 1);
+    }
 }
