@@ -4,7 +4,7 @@ Random rand = new Random();
 var players = RegisterPlayers().ToList();
 int points = 5;
 
-while (true)
+while (players.Any())
 {
     var guessNumber = rand.Next(1, 101);
     Console.WriteLine("Бот загадал число.");
