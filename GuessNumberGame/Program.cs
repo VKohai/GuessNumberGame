@@ -67,6 +67,7 @@ while (players.Count > 0)
 }
 
 Console.WriteLine("Спасибо за игру, {0}!", string.Join(", ", players));
+Console.ReadKey();
 
 static IEnumerable<Player> RegisterPlayers(IRepository<Player> repository)
 {
