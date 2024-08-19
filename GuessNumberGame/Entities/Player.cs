@@ -37,4 +37,6 @@ public class Player : Entity
         if (balance > 0)
             _balance += balance;
     }
+
+    public override string ToString() => Name;
 }
