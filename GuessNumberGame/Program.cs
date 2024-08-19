@@ -1,19 +1,18 @@
-﻿using GuessNumberGame.Abstractions;
-using GuessNumberGame.Entities;
+﻿using GuessNumberGame.Entities;
 using GuessNumberGame.Repositories;
+using GuessNumberGame.Abstractions;
 
-Random rand = new Random();
+var rand = new Random();
 IRepository<Player> playerRepos = new PlayerRepository();
 IRepository<Game> gameRepos = new GameRepository();
 var players = RegisterPlayers(playerRepos).ToList();
 int points = 5;
 
-while (players.Any())
+while (players.Count == 0)
 {
     var (min, max) = ChooseDifficulty();
     var guessNumber = rand.Next(min, max);
     Console.WriteLine($"Бот загадал число {min} до {max - 1}.");
-    int myNumber = 0;
     int playerIndex = 0;
 
     var game = new Game
@@ -28,7 +27,7 @@ while (players.Any())
             playerIndex = 0;
 
         Console.Write($"{players[playerIndex].Name}, ваша очередь!\nЯ думаю, это число ");
-        myNumber = int.Parse(Console.ReadLine());
+        int myNumber = int.Parse(Console.ReadLine()!);
         if (myNumber < guessNumber)
         {
             Console.WriteLine("Число меньше заданного");
@@ -67,6 +66,8 @@ while (players.Any())
     Console.WriteLine();
 }
 
+Console.WriteLine("Спасибо за игру, {0}!", string.Join(", ", players));
+
 static IEnumerable<Player> RegisterPlayers(IRepository<Player> repository)
 {
     Console.Write("Регистрация участников.\n\nВведи колчество игроков: ");
@@ -75,7 +76,7 @@ static IEnumerable<Player> RegisterPlayers(IRepository<Player> repository)
     for (int i = 0; i < amountOfPlayers; ++i)
     {
         Console.Write($"Имя игрока №{i + 1}: ");
-        var name = Console.ReadLine().Trim();
+        var name = Console.ReadLine()!.Trim();
         if (string.IsNullOrEmpty(name))
         {
             --i;
@@ -111,7 +112,7 @@ static (int, int) ChooseDifficulty()
             return (1, 1001);
         default:
             Console.Write("\nЧерез пробел введи мин. и макс. пределы диапазона: ");
-            var (min, max) = Console.ReadLine().Split() switch { var data => (data[0], data[1]) };
+            var (min, max) = Console.ReadLine()!.Split() switch { var data => (data[0], data[1]) };
             return (int.Parse(min), int.Parse(max) + 1);
     }
 }

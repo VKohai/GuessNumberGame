@@ -4,7 +4,7 @@ using GuessNumberGame.Entities;
 namespace GuessNumberGame.Repositories;
 public class GameRepository : IRepository<Game>
 {
-    private static IList<Game> Entities { get; }
+    private static List<Game> Entities { get; }
 
     static GameRepository()
     {
