@@ -12,7 +12,7 @@ while (players.Count > 0)
 {
     var (min, max) = ChooseDifficulty();
     var guessNumber = rand.Next(min, max);
-    Console.WriteLine($"Бот загадал число {min} до {max - 1}.");
+    Console.WriteLine($"Бот загадал число от {min} до {max - 1}.");
     int playerIndex = 0;
 
     var game = new Game
