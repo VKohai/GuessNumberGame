@@ -8,7 +8,7 @@ IRepository<Game> gameRepos = new GameRepository();
 var players = RegisterPlayers(playerRepos).ToList();
 int points = 5;
 
-while (players.Count == 0)
+while (players.Count > 0)
 {
     var (min, max) = ChooseDifficulty();
     var guessNumber = rand.Next(min, max);
