@@ -8,7 +8,7 @@ while (players.Any())
 {
     var (min, max) = ChooseDifficulty();
     var guessNumber = rand.Next(min, max);
-    Console.WriteLine($"Бот загадал число {min} до {max - 1}.");
+    Console.WriteLine($"Бот загадал число от {min} до {max - 1}.");
     int myNumber = 0;
     int playerIndex = 0;
 
